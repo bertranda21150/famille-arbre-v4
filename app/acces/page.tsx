@@ -1,19 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AccesPage() {
   const router = useRouter();
-  const search = useSearchParams();
-  const next = search.get("next") || "/arbre";
 
-  const question = useMemo(
-    () =>
-      process.env.NEXT_PUBLIC_SECRET_QUESTION ||
-      "Question secrète (à configurer dans NEXT_PUBLIC_SECRET_QUESTION)",
-    []
-  );
+  const question =
+    process.env.NEXT_PUBLIC_SECRET_QUESTION ||
+    "Question secrète (à configurer dans Vercel)";
 
   const [answer, setAnswer] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -36,33 +31,49 @@ export default function AccesPage() {
       return;
     }
 
-    router.push(next);
+    router.push("/arbre");
   }
 
   return (
-    <main className="p-6 max-w-xl mx-auto space-y-4">
-      <h1 className="text-3xl font-extrabold">Accès à l’arbre</h1>
+    <main style={{ padding: 24, maxWidth: 700, margin: "0 auto" }}>
+      <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 16 }}>
+        Accès à l’arbre
+      </h1>
 
-      <div className="border rounded-xl p-4 space-y-3">
-        <div className="font-semibold">{question}</div>
+      <label style={{ display: "block", marginBottom: 8, fontWeight: 600 }}>
+        {question}
+      </label>
 
-        <input
-          className="border p-2 w-full rounded-lg"
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          placeholder="Ta réponse"
-        />
+      <input
+        value={answer}
+        onChange={(e) => setAnswer(e.target.value)}
+        placeholder="Ta réponse"
+        style={{
+          width: "100%",
+          padding: 12,
+          borderRadius: 10,
+          border: "1px solid #ccc",
+          marginBottom: 12,
+        }}
+      />
 
-        <button
-          className="bg-black text-white px-4 py-2 rounded-lg w-full disabled:opacity-60"
-          onClick={submit}
-          disabled={loading}
-        >
-          {loading ? "Vérification..." : "Valider"}
-        </button>
+      <button
+        onClick={submit}
+        disabled={loading}
+        style={{
+          padding: "12px 18px",
+          borderRadius: 10,
+          border: "1px solid #ccc",
+        }}
+      >
+        {loading ? "Vérification..." : "Valider"}
+      </button>
 
-        {error && <div className="text-red-600 text-sm">{error}</div>}
-      </div>
+      {error && (
+        <p style={{ marginTop: 12, color: "crimson", fontWeight: 600 }}>
+          {error}
+        </p>
+      )}
     </main>
   );
 }
