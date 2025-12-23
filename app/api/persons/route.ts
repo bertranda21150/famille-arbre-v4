@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { supabaseServer } from "@/lib/supabaseServer";
 
-function requireAccess() {
-  return cookies().get("famille_access")?.value === "ok";
+async function requireAccess() {
+  const cookieStore = await cookies();
+  return cookieStore.get("famille_access")?.value === "ok";
 }
 
 export async function GET(req: Request) {
-  if (!requireAccess()) {
+  if (!(await requireAccess())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -30,7 +31,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  if (!requireAccess()) {
+  if (!(await requireAccess())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
